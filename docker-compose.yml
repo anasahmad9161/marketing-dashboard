@@ -1,0 +1,30 @@
+version: "2"
+services:
+  nginx-service:
+    image: nginx:latest
+    container_name: prod-nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+  sms-soip:
+    restart: on-failure
+    container_name: sms-soip
+    image: docker-registry.gupshup.io/sms-soip:latest
+    ports:
+      - 8080:8080
+    networks:
+      - common-network
+  marketing-dashboard:
+    restart: on-failure
+    container_name: marketing-dashboard
+    image: docker-registry.gupshup.io/marketing-dashboard:latest
+    ports:
+      - 8089:8089
+    env_file:
+      - application-${PROFILE}-properties.env
+    networks:
+      - common-network
+
+networks:
+  common-network:
+    driver: bridge
+
